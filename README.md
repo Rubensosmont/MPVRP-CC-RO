@@ -2,7 +2,7 @@
 ## Multi-Product Vehicle Routing Problem with Changeover Cost
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 [![Status](https://img.shields.io/badge/Status-Operational-success.svg)](.)
 
 Solveur heuristique performant pour le problème MPVRP-CC développé dans le cadre du cours de Recherche Opérationnelle.
