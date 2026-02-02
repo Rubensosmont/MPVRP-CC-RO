@@ -1,9 +1,6 @@
 """
-MPVRP-CC Solver - Version finale corrigée
-- Véhicules partent VIDES du garage
-- Pas de produit initial
-- Gestion stricte des stocks (pas de dépassement)
-- Premier chargement sans coût de changement
+MPVRP-CC Solver - Version finale 
+
 """
 
 import sys
@@ -21,7 +18,7 @@ class Vehicle:
     id: int
     capacity: int
     home_garage: int
-    initial_product: int  # On l'ignore maintenant, véhicule part vide
+    initial_product: int  
 
 
 @dataclass
@@ -187,8 +184,8 @@ class CorrectedMPVRPSolver:
     def build_vehicle_full_route(self, vehicle: Vehicle, remaining_demands: Dict) -> Dict:
         garage = self.instance.garages[vehicle.home_garage - 1]
         
-        # IMPORTANT: Le véhicule part VIDE (pas de produit initial)
-        current_product = None  # Vide au départ
+        
+        current_product = 0  # Produit 0 = état vide/neutre
         
         segments = []
         total_distance = 0.0
@@ -237,7 +234,9 @@ class CorrectedMPVRPSolver:
             segments.append(best_segment)
             total_distance += best_segment['distance']
             total_changeover_cost += best_segment['changeover_cost']
-            if best_segment['changeover_cost'] > 0:
+            
+            # Compter un changement seulement quand le produit CHANGE
+            if current_product != best_product:
                 nb_changes += 1
             
             # Mettre à jour les demandes LOCALES
@@ -339,11 +338,9 @@ class CorrectedMPVRPSolver:
         # Calcul du coût de changement
         changeover_cost = 0.0
         
-        if current_product is None:
-            # Premier chargement: PAS de coût de changement
-            changeover_cost = 0.0
-        elif current_product != product_idx:
-            # Changement de produit: coût applicable
+        # Le véhicule commence avec produit 0 (neutre/vide)
+        # Tout changement (y compris 0→autre) a un coût
+        if current_product != product_idx:
             changeover_cost = self.instance.transition_costs[current_product][product_idx]
         
         return {
